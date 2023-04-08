@@ -9,14 +9,11 @@ import {
   Input,
 } from '@mantine/core';
 import { connectNats, subscribeNats, unsubscribeNats } from 'renderer/ipc';
+import Connect from 'renderer/components/Connect/Connect';
+import events from '../../../../assets/events.json';
 
 const useStyles = createStyles((theme) => ({
-  navbar: {
-    marginLeft: '0',
-  },
-  closed: {
-    marginLeft: '-2rem',
-  },
+  navbar: {},
   section: {
     borderBottom: `1px solid ${theme.colors.gray[8]}`,
   },
@@ -34,22 +31,9 @@ export default function AppNavbar({ open }: AppNavbarProps) {
   }
 
   return (
-    <Navbar
-      className={clsx(classes.navbar, open ? null : classes.closed)}
-      p="xs"
-      width={{ base: '10rem' }}
-    >
+    <Navbar className={clsx(classes.navbar)} p="xs" width={{ base: '20rem' }}>
       <Navbar.Section className={classes.section} p="sm">
-        <Box>
-          <Input
-            defaultValue={customNatsHost}
-            onChange={(e) => {
-              console.log(e.target.value);
-              setCustomNatsHost(e.target.value);
-            }}
-          />
-          <Button onClick={() => connectNats(customNatsHost)}>Connect</Button>
-        </Box>
+        <Connect />
       </Navbar.Section>
 
       <Navbar.Section
@@ -58,10 +42,24 @@ export default function AppNavbar({ open }: AppNavbarProps) {
         component={ScrollArea}
         p="sm"
       >
-        <Button onClick={() => unsubscribeNats()}>unsubscribe all</Button>;
-        <Button onClick={() => subscribeNats('indicator.binance.ETHUSDT_spot')}>
-          indicator.binance.ETHUSDT_spot
+        <Button
+          fullWidth
+          size="xs"
+          variant="subtle"
+          onClick={() => unsubscribeNats()}
+        >
+          unsubscribe all
         </Button>
+        {events.map((e) => (
+          <Button
+            fullWidth
+            size="xs"
+            variant="subtle"
+            onClick={() => subscribeNats(e)}
+          >
+            {e}
+          </Button>
+        ))}
       </Navbar.Section>
 
       <Navbar.Section className={classes.section}>

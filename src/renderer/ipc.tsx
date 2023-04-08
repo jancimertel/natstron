@@ -10,7 +10,16 @@ export enum ChannelTypes {
   NatsUnsubscribed = 'nats-unsubscribed',
   NatsAllUnsubscribed = 'nats-all-unsubscribed',
   NatsConnected = 'nats-connected',
+  NatsError = 'nats-error',
   NatsEvent = 'nats-event',
+}
+
+// eslint-disable-next-line no-shadow
+export enum LogColors {
+  Error = 'red',
+  Warn = 'orange',
+  Info = 'blue',
+  Debug = 'grey',
 }
 
 export default () => {
@@ -20,15 +29,27 @@ export default () => {
 
   window.electron.ipcRenderer.on(ChannelTypes.NatsConnected, (arg) => {
     notifications.show({
-      variant: 'info',
+      color: LogColors.Info,
       title: 'Nats connected',
       message: '',
     });
   });
 
+  window.electron.ipcRenderer.on(ChannelTypes.NatsError, (arg) => {
+    let msg;
+    if ((arg as any).length) {
+      [msg] = arg as any;
+    }
+    notifications.show({
+      color: LogColors.Error,
+      title: `Nats error`,
+      message: msg,
+    });
+  });
+
   window.electron.ipcRenderer.on(ChannelTypes.NatsSubscribed, (arg) => {
     notifications.show({
-      variant: 'info',
+      color: LogColors.Info,
       title: `Subscribed to ${(arg as string[])[0]}`,
       message: '',
     });
@@ -36,7 +57,7 @@ export default () => {
 
   window.electron.ipcRenderer.on(ChannelTypes.NatsUnsubscribed, (arg) => {
     notifications.show({
-      variant: 'info',
+      color: LogColors.Info,
       title: `Unsubscribed from ${(arg as string[])[0]}`,
       message: '',
     });
@@ -44,7 +65,7 @@ export default () => {
 
   window.electron.ipcRenderer.on(ChannelTypes.NatsAllUnsubscribed, (arg) => {
     notifications.show({
-      variant: 'info',
+      color: LogColors.Info,
       title: 'All subscriptions cleared',
       message: '',
     });

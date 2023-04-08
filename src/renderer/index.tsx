@@ -28,7 +28,8 @@ export default function App() {
       theme={{
         colorScheme: 'dark',
         colors: {
-          info: ['#31708F'],
+          info: ['#00208F'],
+          error: ['#31708F'],
         },
       }}
     >
@@ -56,7 +57,6 @@ export default function App() {
         }
         navbar={<AppNavbar open={open} />}
       >
-        ;
         <div>
           <Router>
             <Routes>

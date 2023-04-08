@@ -64,6 +64,7 @@ export default class NatsClient {
     } catch (err) {
       console.log(err);
       console.log(`error connecting to ${JSON.stringify(err)}`);
+      this.sendToBrowser(ChannelTypes.NatsError, [(err as any).toString()]);
     }
   }
 

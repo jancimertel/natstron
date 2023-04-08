@@ -8,7 +8,7 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-import-module-exports': 'off',
-    'no-unused-vars': 'off'
+    'no-unused-vars': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
