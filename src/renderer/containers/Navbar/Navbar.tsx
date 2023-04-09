@@ -52,6 +52,7 @@ export default function AppNavbar({ open }: AppNavbarProps) {
         </Button>
         {events.map((e) => (
           <Button
+            key={e}
             fullWidth
             size="xs"
             variant="subtle"

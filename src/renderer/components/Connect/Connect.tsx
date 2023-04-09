@@ -1,11 +1,8 @@
-import React, { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
-  Navbar,
-  ScrollArea,
   createStyles,
   Box,
   Button,
-  clsx,
   Modal,
   Group,
   Select,
@@ -14,7 +11,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import { connectNats, subscribeNats, unsubscribeNats } from 'renderer/ipc';
+import { connectNats, disconnectNats } from 'renderer/ipc';
+import { useSelector } from 'react-redux';
+import {
+  connectionSelector,
+  ConnectionStates,
+} from 'renderer/store/connection';
 import connections from '../../../../assets/connections.json';
 
 const useStyles = createStyles((theme) => ({
@@ -22,6 +24,18 @@ const useStyles = createStyles((theme) => ({
     'div.mantine-Select-dropdown': {
       maxHeight: '100px',
       overflowY: 'auto',
+    },
+  },
+  connect: {
+    background: theme.colors.info[0],
+    '&:hover': {
+      background: theme.colors.info[1],
+    },
+  },
+  disconnect: {
+    background: theme.colors.error[0],
+    '&:hover': {
+      background: theme.colors.error[1],
     },
   },
 }));
@@ -32,6 +46,7 @@ export default function Connect() {
   const [opened, { open, close }] = useDisclosure(false);
   const customHostRef = useRef(null);
   const selectRef = useRef(null);
+  const { state } = useSelector(connectionSelector);
 
   function connect() {
     let host;
@@ -43,6 +58,12 @@ export default function Connect() {
 
     connectNats(host);
   }
+
+  useEffect(() => {
+    if (state === ConnectionStates.Connected && opened) {
+      close();
+    }
+  }, [state, opened, close]);
 
   return (
     <>
@@ -61,12 +82,26 @@ export default function Connect() {
           <Input ref={customHostRef} />
         </Box>
         <Box>
-          <Button onClick={() => connect()}>Connect</Button>
+          {state === ConnectionStates.Disconnected && (
+            <Button onClick={() => connect()}>Connect</Button>
+          )}
         </Box>
       </Modal>
 
       <Group position="center">
-        <Button onClick={open}>Connect</Button>
+        {state === ConnectionStates.Disconnected && (
+          <Button className={classes.connect} onClick={open}>
+            Connect
+          </Button>
+        )}
+        {state === ConnectionStates.Connected && (
+          <Button
+            className={classes.disconnect}
+            onClick={() => disconnectNats()}
+          >
+            Disconnect
+          </Button>
+        )}
       </Group>
     </>
   );

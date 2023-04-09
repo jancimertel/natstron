@@ -13,13 +13,19 @@ import {
 import { Notifications } from '@mantine/notifications';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
 import ipc, { ChannelTypes } from './ipc';
 import Main from './pages/Main/Main';
 import AppNavbar from './containers/Navbar/Navbar';
+import store, { useAppDispatch } from './store';
 
 export default function App() {
   const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    ipc(store.dispatch);
+  }, []);
 
   return (
     <MantineProvider
@@ -28,43 +34,43 @@ export default function App() {
       theme={{
         colorScheme: 'dark',
         colors: {
-          info: ['#00208F'],
-          error: ['#31708F'],
+          info: ['#00208F', '#D9EDF7'],
+          error: ['#D8000C', '#FFBABA'],
         },
       }}
     >
-      <Notifications />
-      <AppShell
-        padding="md"
-        styles={(theme) => ({
-          main: {
-            backgroundColor:
-              theme.colorScheme === 'dark'
-                ? theme.colors.dark[8]
-                : theme.colors.gray[0],
-          },
-        })}
-        header={
-          <Header height={30}>
-            <ActionIcon variant="transparent" onClick={() => setOpen(!open)}>
-              {open ? (
-                <IconChevronLeft size="sx" />
-              ) : (
-                <IconChevronRight size="sx" />
-              )}
-            </ActionIcon>
-          </Header>
-        }
-        navbar={<AppNavbar open={open} />}
-      >
-        <div>
+      <Provider store={store}>
+        <Notifications />
+        <AppShell
+          padding="md"
+          styles={(theme) => ({
+            main: {
+              backgroundColor:
+                theme.colorScheme === 'dark'
+                  ? theme.colors.dark[8]
+                  : theme.colors.gray[0],
+            },
+          })}
+          header={
+            <Header height={30}>
+              <ActionIcon variant="transparent" onClick={() => setOpen(!open)}>
+                {open ? (
+                  <IconChevronLeft size="12" />
+                ) : (
+                  <IconChevronRight size="12" />
+                )}
+              </ActionIcon>
+            </Header>
+          }
+          navbar={<AppNavbar open={open} />}
+        >
           <Router>
             <Routes>
               <Route path="/" element={<Main />} />
             </Routes>
           </Router>
-        </div>
-      </AppShell>
+        </AppShell>
+      </Provider>
     </MantineProvider>
   );
 }
@@ -72,7 +78,6 @@ const container = document.getElementById('root')!;
 const root = createRoot(container);
 root.render(<App />);
 
-ipc();
 // calling IPC exposed from preload script
 window.electron.ipcRenderer.once(ChannelTypes.IPCExample, (arg) => {
   // eslint-disable-next-line no-console

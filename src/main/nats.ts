@@ -52,6 +52,11 @@ export default class NatsClient {
       }
       this.sendToBrowser(ChannelTypes.NatsAllUnsubscribed, []);
     });
+
+    ipc.on(ChannelTypes.NatsDisconnect, async (event, arg) => {
+      await this.nc?.close();
+      this.sendToBrowser(ChannelTypes.NatsDisconnected, []);
+    });
   }
 
   async connect(host: string): Promise<void> {
