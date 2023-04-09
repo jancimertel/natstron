@@ -1,8 +1,10 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import connectionReducer from './connection';
+import connectionSlice from './connection';
+import eventsSlice from './events';
 
 const rootReducer = combineReducers({
-  [connectionReducer.name]: connectionReducer.reducer,
+  [connectionSlice.name]: connectionSlice.reducer,
+  [eventsSlice.name]: eventsSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

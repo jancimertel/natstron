@@ -7,19 +7,37 @@ import {
   Button,
   clsx,
   Input,
+  Text,
 } from '@mantine/core';
 import { connectNats, subscribeNats, unsubscribeNats } from 'renderer/ipc';
 
-const useStyles = createStyles((theme) => ({}));
+const useStyles = createStyles((theme) => ({
+  header: {
+    borderBottom: `1px solid ${theme.colors.gray[8]}`,
+  },
+}));
 
-interface ListProps {}
-export default function List({}: ListProps) {
+interface ListProps {
+  eventName: string;
+  events: any[];
+}
+export default function List({ eventName, events }: ListProps) {
   const { classes } = useStyles();
 
   return (
     <>
-      <Box>header</Box>
-      <Box>body</Box>
+      <Box className={classes.header}>
+        <Text size="lg">{eventName}</Text>
+      </Box>
+      <Box>
+        {events
+          ? events.map((e) => (
+              <div>
+                {e.time.toISOString()} | {e.data}
+              </div>
+            ))
+          : null}
+      </Box>
     </>
   );
 }

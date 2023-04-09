@@ -7,6 +7,7 @@ import {
   removeSubscription,
   setError,
 } from './store/connection';
+import { addEvent } from './store/events';
 
 // eslint-disable-next-line no-shadow
 export enum ChannelTypes {
@@ -29,11 +30,14 @@ export default (dispatch: AppDispatch) => {
 
   window.electron.ipcRenderer.on(ChannelTypes.NatsEvent, (arg) => {
     let event;
-    if ((arg as any).length) {
-      [event] = arg as any;
+    let data;
+    if ((arg as any).length === 2) {
+      [event, data] = arg as any;
     }
 
     console.log(event);
+
+    dispatch(addEvent(arg as [string, any]));
   });
 
   window.electron.ipcRenderer.on(ChannelTypes.NatsConnected, (arg) => {
@@ -71,6 +75,12 @@ export const subscribeNats = (event: string) => {
   window.electron.ipcRenderer.sendMessage(ChannelTypes.NatsSubscribe, [event]);
 };
 
-export const unsubscribeNats = () => {
+export const unsubscribeNats = (event: string) => {
+  window.electron.ipcRenderer.sendMessage(ChannelTypes.NatsUnsubscribe, [
+    event,
+  ]);
+};
+
+export const unsubscribeNatsAll = () => {
   window.electron.ipcRenderer.sendMessage(ChannelTypes.NatsUnsubscribe, []);
 };

@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { notifications } from '@mantine/notifications';
-import { RootState } from './root';
 
 // eslint-disable-next-line no-shadow
 export enum ConnectionStates {
@@ -91,6 +90,7 @@ const connectionSlice = createSlice({
 export const { changeState, setError, addSubscription, removeSubscription } =
   connectionSlice.actions;
 
-export const connectionSelector = (state: RootState) => state.connection;
+export const connectionSelector = (state: { connection: ConnectionState }) =>
+  state.connection;
 
 export default connectionSlice;

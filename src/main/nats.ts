@@ -40,16 +40,29 @@ export default class NatsClient {
     ipc.on(ChannelTypes.NatsSubscribe, async (event, arg) => {
       logMsg(ChannelTypes.NatsSubscribe, arg);
       await this.subscribe(arg[0], (natsEvent, natsData) => {
-        this.sendToBrowser(ChannelTypes.NatsEvent, [natsEvent, natsData]);
+        this.sendToBrowser(ChannelTypes.NatsEvent, [
+          natsEvent,
+          {
+            time: new Date(),
+            data: natsData,
+          },
+        ]);
       });
     });
 
     ipc.on(ChannelTypes.NatsUnsubscribe, async (event, arg) => {
       logMsg(ChannelTypes.NatsUnsubscribe, arg);
+      let natsEvent = '';
+      if (arg.length) {
+        [natsEvent] = arg;
+      }
+
       // eslint-disable-next-line no-restricted-syntax
       for (const sub of this.subs) {
-        sub.unsubscribe();
-        this.sendToBrowser(ChannelTypes.NatsUnsubscribed, [sub.getSubject()]);
+        if (!natsEvent || sub.getSubject() === natsEvent) {
+          sub.unsubscribe();
+          this.sendToBrowser(ChannelTypes.NatsUnsubscribed, [sub.getSubject()]);
+        }
       }
       this.sendToBrowser(ChannelTypes.NatsAllUnsubscribed, []);
     });
