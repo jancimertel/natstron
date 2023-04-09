@@ -49,6 +49,7 @@ export default class NatsClient {
       // eslint-disable-next-line no-restricted-syntax
       for (const sub of this.subs) {
         sub.unsubscribe();
+        this.sendToBrowser(ChannelTypes.NatsUnsubscribed, [sub.getSubject()]);
       }
       this.sendToBrowser(ChannelTypes.NatsAllUnsubscribed, []);
     });

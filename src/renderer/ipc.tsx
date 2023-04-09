@@ -52,7 +52,9 @@ export default (dispatch: AppDispatch) => {
     dispatch(addSubscription((arg as any)[0]));
   });
 
-  window.electron.ipcRenderer.on(ChannelTypes.NatsUnsubscribed, (arg) => {});
+  window.electron.ipcRenderer.on(ChannelTypes.NatsUnsubscribed, (arg) => {
+    dispatch(removeSubscription((arg as any)[0]));
+  });
 
   window.electron.ipcRenderer.on(ChannelTypes.NatsAllUnsubscribed, (arg) => {});
 };
