@@ -43,7 +43,7 @@ export default class NatsClient {
         this.sendToBrowser(ChannelTypes.NatsEvent, [
           natsEvent,
           {
-            time: new Date(),
+            time: new Date().toISOString(),
             data: natsData,
           },
         ]);

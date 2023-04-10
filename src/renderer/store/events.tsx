@@ -32,7 +32,10 @@ export const { setEventDetail, addEvent } = eventsSlice.actions;
 export const eventsSelector = (state: { events: EventsState }) => state.events;
 
 export const eventTypesSelector = (state: { events: EventsState }) => {
-  return Object.keys(state.events.events);
+  return Object.keys(state.events.events).map((eType) => ({
+    type: eType,
+    count: state.events.events[eType].length,
+  }));
 };
 
 export default eventsSlice;

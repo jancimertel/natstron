@@ -1,15 +1,4 @@
-import React, { useState } from 'react';
-import {
-  Navbar,
-  ScrollArea,
-  createStyles,
-  Box,
-  Button,
-  clsx,
-  Input,
-  Text,
-} from '@mantine/core';
-import { connectNats, subscribeNats, unsubscribeNats } from 'renderer/ipc';
+import { createStyles, Box, Text } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -33,7 +22,7 @@ export default function List({ eventName, events }: ListProps) {
         {events
           ? events.map((e) => (
               <div>
-                {e.time.toISOString()} | {e.data}
+                {e.time} | {e.data}
               </div>
             ))
           : null}
